@@ -9,6 +9,8 @@ import io.reactivex.schedulers.Schedulers;
 import meesho.com.getprgithub.model.PullRequest;
 import meesho.com.getprgithub.network.BaseApi;
 import meesho.com.getprgithub.network.NetworkAdapter;
+import meesho.com.getprgithub.network.PageLinks;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -17,6 +19,11 @@ import timber.log.Timber;
 public class PRListPresenter implements PRListContract.PRListPresenter {
 
     PRListContract.PRListView view;
+    BaseApi baseApi;
+
+    PRListPresenter() {
+        this.baseApi = NetworkAdapter.getClient().create(BaseApi.class);
+    }
 
     @Override
     public void attach(PRListContract.PRListView view) {
@@ -34,19 +41,57 @@ public class PRListPresenter implements PRListContract.PRListPresenter {
     }
 
     @Override
-    public void fetchPR(String ownerName, String repoName) {
-        BaseApi baseApi = NetworkAdapter.getClient().create(BaseApi.class);
-
-        baseApi.fetchPullRequests(ownerName, repoName).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<List<PullRequest>>() {
+    public void fetchPR(String ownerName, String repoName, String state) {
+        baseApi.fetchPullRequests(ownerName, repoName, state, 8, 1).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
             @Override
             public void onSubscribe(Disposable d) {
                 view.showProgress(true);
             }
 
             @Override
-            public void onNext(List<PullRequest> pullRequests) {
+            public void onNext(Response<List<PullRequest>> response) {
                 view.showProgress(false);
-                view.onFetchPR(pullRequests);
+                if (response.isSuccessful()) {
+                    if (response.headers().get("link") != null) {
+                        PageLinks pageLinks = new PageLinks(response.headers().get("link"));
+                        view.onPageLinks(pageLinks);
+                    }
+                    view.onFetchPR(response.body());
+                } else {
+                    view.showError(new Error(response.message()));
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                view.showProgress(false);
+                Timber.d("onError");
+                view.showError(new Error(e.getMessage()));
+            }
+
+            @Override
+            public void onComplete() {
+                Timber.d("completed");
+            }
+        });
+    }
+
+    @Override
+    public void loadMore(String nextUrl) {
+        baseApi.fetchNextPagePullRequests(nextUrl).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+                view.showProgress(true);
+            }
+
+            @Override
+            public void onNext(Response<List<PullRequest>> pullRequests) {
+                view.showProgress(false);
+                if (pullRequests.headers().get("link") != null) {
+                    PageLinks pageLinks = new PageLinks(pullRequests.headers().get("link"));
+                    view.onPageLinks(pageLinks);
+                }
+                view.onFetchPR(pullRequests.body());
             }
 
             @Override

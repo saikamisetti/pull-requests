@@ -12,6 +12,8 @@ public class PullRequest {
     private String title;
     @Json(name = "number")
     private int number;
+    @Json(name = "user")
+    private User user;
 
     public String getId() {
         return id;
@@ -28,9 +30,6 @@ public class PullRequest {
     public User getUser() {
         return user;
     }
-
-    @Json(name = "user")
-    private User user;
 //    @Json(name = "created_at")
 //    private long createdAt;
 }

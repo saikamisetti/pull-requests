@@ -8,6 +8,7 @@ import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -22,6 +23,8 @@ public class NetworkAdapter {
 
     public static Retrofit getClient() {
         if (retrofit == null) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
                 @Override public okhttp3.Response intercept(Chain chain) throws IOException {
                     Request request = chain.request();
@@ -32,7 +35,7 @@ public class NetworkAdapter {
 
                     return response;
                 }
-            }).build();
+            }).addInterceptor(interceptor).build();
 
             Moshi moshi = new Moshi.Builder().build();
             retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
