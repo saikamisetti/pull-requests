@@ -50,7 +50,7 @@ public class PRListAdapter extends Adapter<PRListAdapter.ItemViewHolder> {
 
     }
 
-    static class ItemViewHolder extends RecyclerView.ViewHolder{
+    static class ItemViewHolder extends RecyclerView.ViewHolder {
 
         Unbinder unbinder;
 
@@ -60,6 +60,7 @@ public class PRListAdapter extends Adapter<PRListAdapter.ItemViewHolder> {
         TextView userName;
         @BindView(R.id.tv_num)
         TextView prNum;
+
         public ItemViewHolder(View itemView) {
             super(itemView);
         }
