@@ -42,7 +42,7 @@ public class PRListPresenter implements PRListContract.PRListPresenter {
 
     @Override
     public void fetchPR(String ownerName, String repoName, String state) {
-        baseApi.fetchPullRequests(ownerName, repoName, state, 8, 1).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
+        baseApi.fetchPullRequests(ownerName, repoName, state, view.pageSize(), view.pageNum()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
             @Override
             public void onSubscribe(Disposable d) {
                 view.showProgress(true);

@@ -29,6 +29,8 @@ import meesho.com.getprgithub.widget.PREditTextWidget;
  */
 public class PRListActivity extends AppCompatActivity implements PRListContract.PRListView {
 
+    private static final int DEFAULT_PAGE_SIZE = 8;
+    private static final int FIRST_PAGE = 1;
     List<PullRequest> pullRequests = new ArrayList<>();
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
@@ -48,9 +50,9 @@ public class PRListActivity extends AppCompatActivity implements PRListContract.
     PRListContract.PRListPresenter presenter;
     PageLinks pageLinks;
     boolean isLoading = false;
+    Unbinder unbinder;
     private ArrayAdapter spinnerAdapter;
     private String state = "open";
-    Unbinder unbinder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -152,6 +154,16 @@ public class PRListActivity extends AppCompatActivity implements PRListContract.
     @Override
     public void onPageLinks(PageLinks pageLinks) {
         this.pageLinks = pageLinks;
+    }
+
+    @Override
+    public int pageNum() {
+        return FIRST_PAGE;
+    }
+
+    @Override
+    public int pageSize() {
+        return DEFAULT_PAGE_SIZE;
     }
 
     @Override

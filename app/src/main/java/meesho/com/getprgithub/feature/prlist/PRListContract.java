@@ -15,6 +15,10 @@ public class PRListContract {
         void onFetchPR(List<PullRequest> pullRequests);
 
         void onPageLinks(PageLinks pageLinks);
+
+        int pageNum();
+
+        int pageSize();
     }
 
     public interface PRListPresenter extends BasePresenter<PRListView> {
