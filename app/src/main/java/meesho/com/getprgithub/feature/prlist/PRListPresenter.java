@@ -42,7 +42,7 @@ public class PRListPresenter implements PRListContract.PRListPresenter {
 
     @Override
     public void fetchPR(String ownerName, String repoName, String state) {
-        baseApi.fetchPullRequests(ownerName, repoName, state, view.pageSize(), view.pageNum()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
+        baseApi.fetchInitialPullRequests(ownerName, repoName, state, view.pageSize(), view.pageNum()).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
             @Override
             public void onSubscribe(Disposable d) {
                 view.showProgress(true);
@@ -78,7 +78,7 @@ public class PRListPresenter implements PRListContract.PRListPresenter {
 
     @Override
     public void loadMore(String nextUrl) {
-        baseApi.fetchNextPagePullRequests(nextUrl).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
+        baseApi.fetchPullRequests(nextUrl).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Observer<Response<List<PullRequest>>>() {
             @Override
             public void onSubscribe(Disposable d) {
                 view.showProgress(true);

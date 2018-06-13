@@ -88,11 +88,7 @@ public class PRListActivity extends AppCompatActivity implements PRListContract.
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String state = (String) parent.getItemAtPosition(position);
                 state = state.toLowerCase();
-                PRListActivity.this.state = state;
-                if (entriesValid()) {
-                    pullRequests.clear();
-                    presenter.fetchPR(etOwner.getEditText(), etRepoName.getEditText(), state);
-                }
+                PRListActivity.this.state = state;sdfs
             }
 
             @Override
